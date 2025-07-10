@@ -10,6 +10,7 @@ import { hasEmailError, isRequired } from "../../utils/validators";
 import { AuthService } from "../../data-access/auth";
 import { toast } from "ngx-sonner";
 import { Router, RouterLink } from "@angular/router";
+import { GoogleButton } from "../../ui/google-button/google-button";
 
 interface FormSignUp {
   email: FormControl<string | null>;
@@ -18,7 +19,7 @@ interface FormSignUp {
 
 @Component({
   selector: "app-sign-up",
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, GoogleButton],
   templateUrl: "./sign-up.html",
   styles: ``,
 })
