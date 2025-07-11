@@ -1,14 +1,15 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
   ReactiveFormsModule,
   Validators,
-} from "@angular/forms";
-import { AuthService } from "../../data-access/auth";
-import { toast } from "ngx-sonner";
-import { hasEmailError, isRequired } from "../../utils/validators";
-import { Router, RouterLink } from "@angular/router";
+} from '@angular/forms';
+import { AuthService } from '../../data-access/auth';
+import { toast } from 'ngx-sonner';
+import { hasEmailError, isRequired } from '../../utils/validators';
+import { Router, RouterLink } from '@angular/router';
+import { GoogleButton } from '../../ui/google-button/google-button';
 
 interface FormSignIn {
   email: FormControl<string | null>;
@@ -16,9 +17,9 @@ interface FormSignIn {
 }
 
 @Component({
-  selector: "app-sign-in",
-  imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: "./sign-in.html",
+  selector: 'app-sign-in',
+  imports: [ReactiveFormsModule, RouterLink, GoogleButton],
+  templateUrl: './sign-in.html',
   styles: ``,
 })
 export default class SignIn {
@@ -26,7 +27,7 @@ export default class SignIn {
   private _authService = inject(AuthService); // connection firebase
   private _router = inject(Router); // Inject Router for navigation
 
-  isRequired(field: "email" | "password") {
+  isRequired(field: 'email' | 'password') {
     return isRequired(field, this.form);
   }
 
@@ -37,12 +38,12 @@ export default class SignIn {
   // Creacion de el formulario
   form = this._formBuilder.group<FormSignIn>({
     // Define the form structure
-    email: this._formBuilder.control("", [
+    email: this._formBuilder.control('', [
       // Initialize email control with validators
       Validators.required,
       Validators.email,
     ]),
-    password: this._formBuilder.control("", [Validators.required]), // Initialize password control with validators
+    password: this._formBuilder.control('', [Validators.required]), // Initialize password control with validators
   });
 
   // funcion que ejecuta la validacion
@@ -56,10 +57,20 @@ export default class SignIn {
 
       await this._authService.signIn({ email, password });
 
-      toast.success("Welcome back!"); // Show success message
-      this._router.navigateByUrl("/tasks"); // Navigate to tasks page after successful sign-up
+      toast.success('Welcome back!'); // Show success message
+      this._router.navigateByUrl('/tasks'); // Navigate to tasks page after successful sign-up
     } catch (error) {
-      toast.success("Something went wrong");
+      toast.success('Something went wrong');
+    }
+  }
+
+  async submitWithGoogle() {
+    try {
+      await this._authService.signInWithGoogle();
+      toast.success('User signed in with Google successfully');
+      this._router.navigateByUrl('/tasks'); // Navigate to tasks page after successful sign-in
+    } catch (error) {
+      toast.error('Something went wrong with Google Sign-In');
     }
   }
 }
